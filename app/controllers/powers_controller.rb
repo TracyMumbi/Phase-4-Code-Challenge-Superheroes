@@ -1,4 +1,5 @@
 class PowersController < ApplicationController
+    rescue_from ActiveRecord::RecordInvalid, with: :validation_errors
     def index
         power = Power.all
         render json: power, status: :ok
@@ -24,5 +25,9 @@ class PowersController < ApplicationController
     private
     def power_params
         params.permit(:name, :description)
+    end
+
+    def validation_errors(invalid)
+        render json: { error: invalid.record.errors.full_messages }, status: :unprocessable_entity
     end
 end
